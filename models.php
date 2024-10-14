@@ -1,76 +1,30 @@
-<!-- Functions for interacting with the database -->
-
-<?php 
-
+<?php
 require_once 'dbConfig.php';
 
-function insertIntoStudentRecords($pdo,$user_name, $pass_word, $gender, $computer_id,) {
-
-	$sql = "INSERT INTO customer_records (user_name,pass_word,gender,computer_id,remaining_balance) VALUES (?,?,?,?,?)";
-
-	$stmt = $pdo->prepare($sql);
-
-	$executeQuery = $stmt->execute([$user_name, $pass_word, $gender, $computer_id, 
-,]);
-
-	if ($executeQuery) {
-		return true;	
-	}
+function getAllStudents($pdo) {
+    $stmt = $pdo->prepare("SELECT * FROM students");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function seeAllStudentRecords($pdo) {
-	$sql = "SELECT * FROM customer_records";
-	$stmt = $pdo->prepare($sql);
-	$executeQuery = $stmt->execute();
-	if ($executeQuery) {
-		return $stmt->fetchAll();
-	}
+function getStudentByID($pdo, $student_id) {
+    $stmt = $pdo->prepare("SELECT * FROM students WHERE student_id = :student_id");
+    $stmt->execute(['student_id' => $student_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-function getStudentByID($pdo, $customer_id) {
-	$sql = "SELECT * FROM customer_records WHERE customer_id = ?";
-	$stmt = $pdo->prepare($sql);
-	if ($stmt->execute([$customer_id])) {
-		return $stmt->fetch();
-	}
+function addStudent($pdo, $data) {
+    $stmt = $pdo->prepare("INSERT INTO students (first_name, last_name, gender, section, dream_job, specialty) VALUES (:first_name, :last_name, :gender, :section, :dream_job, :specialty)");
+    return $stmt->execute($data);
 }
 
-function updateAStudent($pdo, $customer_id, $user_name, $pass_word, 
-	$gender, $computer_id,) {
-
-	$sql = "UPDATE customer_records 
-				SET user_name = ?, 
-					pass_word = ?, 
-					gender = ?, 
-					computer_id = ?, 
-					remaining_balance = ?, 
-			WHERE customer_id = ?";
-	$stmt = $pdo->prepare($sql);
-	
-	$executeQuery = $stmt->execute([$user_name, $pass_word, $gender, 
-		$computer_id,, $customer_id]);
-
-	if ($executeQuery) {
-		return true;
-	}
+function updateStudent($pdo, $data) {
+    $stmt = $pdo->prepare("UPDATE students SET first_name = :first_name, last_name = :last_name, gender = :gender, section = :section, dream_job = :dream_job, specialty = :specialty WHERE student_id = :student_id");
+    return $stmt->execute($data);
 }
 
-
-
-function deleteAStudent($pdo, $customer_id) {
-
-	$sql = "DELETE FROM customer_records WHERE customer_id = ?";
-	$stmt = $pdo->prepare($sql);
-
-	$executeQuery = $stmt->execute([$customer_id]);
-
-	if ($executeQuery) {
-		return true;
-	}
-
+function deleteStudent($pdo, $student_id) {
+    $stmt = $pdo->prepare("DELETE FROM students WHERE student_id = :student_id");
+    return $stmt->execute(['student_id' => $student_id]);
 }
-
-
-
-
 ?>
