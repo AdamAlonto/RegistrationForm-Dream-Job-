@@ -1,12 +1,13 @@
 <?php
+$host = 'localhost';
+$dbname = 'aaa'; 
+$username = 'root'; 
+$password = ''; 
 
-$host = "localhost";
-$user = "root";
-$password = "";
-$dbname = "AAA";
-$dsn = "mysql:host={$host};dbname={$dbname}";
-
-$pdo = new PDO(dsn: $dsn, username: $user, password: $password);
-$pdo = exec(command: "SET time_zone = '+08:00';");
-
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
 ?>
